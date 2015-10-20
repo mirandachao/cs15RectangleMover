@@ -1,9 +1,9 @@
 
-public class RectangleProxy {
+public class MovableRectProxy {
 	
 	private MovableRect _movingRectangle;
 	
-	public RectangleProxy() {
+	public MovableRectProxy() {
 		/* Constructor doesn't need to do anything because PaneOrganizer will call setHexagon(...)*/
 	}
 	

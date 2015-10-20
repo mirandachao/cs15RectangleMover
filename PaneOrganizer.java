@@ -13,10 +13,9 @@ import javafx.scene.shape.Rectangle;
 public class PaneOrganizer {
 	
 	private BorderPane _root;
-	private Pane _rectPane;
-	private RectangleProxy _proxy;
+	private MovableRectProxy _proxy;
 	
-	enum Directions {
+	enum Direction {
 		UP,
 		DOWN,
 		RIGHT,
@@ -25,11 +24,8 @@ public class PaneOrganizer {
 
 	public PaneOrganizer() {
 		_root = new BorderPane();
-		_rectPane = new Pane();
 		
-		_root.getChildren().add(_rectPane);
-		
-		_proxy = new RectangleProxy();	
+		_proxy = new MovableRectProxy();	
 		this.setUpRectangles();
 		this.setUpButtons();
 	}
@@ -43,22 +39,22 @@ public class PaneOrganizer {
 		buttonBox.setAlignment(Pos.CENTER);
 		
 		Button upButton = new Button("Up");
-		upButton.setOnAction(new MoveHandler(Directions.UP));
+		upButton.setOnAction(new MoveHandler(Direction.UP));
 		GridPane.setHalignment(upButton, HPos.CENTER);
 		buttonBox.add(upButton, 1, 0);
 		
 		Button downButton = new Button("Down");
-		downButton.setOnAction(new MoveHandler(Directions.DOWN));
+		downButton.setOnAction(new MoveHandler(Direction.DOWN));
 		GridPane.setHalignment(downButton, HPos.CENTER);
 		buttonBox.add(downButton, 1, 2);
 
 		Button rightButton = new Button("Right");
-		rightButton.setOnAction(new MoveHandler(Directions.RIGHT));
+		rightButton.setOnAction(new MoveHandler(Direction.RIGHT));
 		GridPane.setHalignment(rightButton, HPos.RIGHT);
 		buttonBox.add(rightButton, 2, 1);
 		
 		Button leftButton = new Button("Left");
-		leftButton.setOnAction(new MoveHandler(Directions.LEFT));
+		leftButton.setOnAction(new MoveHandler(Direction.LEFT));
 		GridPane.setHalignment(leftButton, HPos.LEFT);
 		buttonBox.add(leftButton, 0, 1);
 		
@@ -74,28 +70,31 @@ public class PaneOrganizer {
 	
 	private void setUpRectangles() {
 		MovableRect rect1 = new MovableRect(_proxy);
-		rect1.getRect().setX(70);
-		rect1.getRect().setY(100);
-		rect1.getRect().setFill(Color.BISQUE);
+		rect1.getNode().setX(70);
+		rect1.getNode().setY(100);
+		rect1.getNode().setFill(Color.BISQUE);
 		MovableRect rect2 = new MovableRect(_proxy);
-		rect2.getRect().setX(300);
-		rect2.getRect().setY(200);
-		rect2.getRect().setFill(Color.CADETBLUE);
-		_rectPane.getChildren().addAll(rect1.getRect(), rect2.getRect());
+		rect2.getNode().setX(300);
+		rect2.getNode().setY(200);
+		rect2.getNode().setFill(Color.CADETBLUE);
+		
+		Pane rectPane = new Pane();
+		rectPane.getChildren().addAll(rect1.getNode(), rect2.getNode());
+		_root.getChildren().add(rectPane);
 		
 		_proxy.setRectangle(rect1);
 	}
 
 	private class MoveHandler implements EventHandler<ActionEvent> {
 		
-		Directions _directions;
+		Direction _direction;
 		
-		public MoveHandler(Directions direction) {
-			this._directions = direction;
+		public MoveHandler(Direction direction) {
+			_direction = direction;
 		}
 		
 		public void handle(ActionEvent event) {
-			switch(_directions) {
+			switch(_direction) {
 				case UP:
 					_proxy.moveUp();
 					break;
@@ -114,10 +113,6 @@ public class PaneOrganizer {
 	}
 	
 	private class QuitHandler implements EventHandler<ActionEvent> {
-		
-		public QuitHandler() {
-			
-		}
 		
 		public void handle (ActionEvent event) {
 			System.exit(0);
